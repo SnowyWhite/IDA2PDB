@@ -38,13 +38,18 @@ LLVM_COMPONENTS = ("debuginfopdb", "debuginfocodeview", "debuginfomsf", "object"
 
 
 def executable(value) -> Path:
-    """A program by name (searched on PATH) or by path."""
+    """A program by name (searched on PATH) or by path.
+
+    The path is made absolute but symbolic links are not followed: Clang picks
+    its driver mode from the name it is invoked by, and on Linux `clang++` is
+    usually a link to `clang`, which would compile and link as C.
+    """
     found = shutil.which(str(value))
     if found:
-        return Path(found).resolve()
+        return Path(found).absolute()
     path = Path(value).expanduser()
     if path.is_file():
-        return path.resolve()
+        return path.absolute()
     raise ExportError(f"executable not found: {value}")
 
 
@@ -85,7 +90,7 @@ class Toolchain:
         if self.pdbgen_path:
             path = executable(self.pdbgen_path)
         elif found := shutil.which(WRITER_NAME):
-            path = Path(found).resolve()
+            path = Path(found).absolute()
         elif BUNDLED.is_file():
             path = BUNDLED
         else:
