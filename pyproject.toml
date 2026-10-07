@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "setuptools-scm>=8"]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,12 @@ name = "ida2pdb"
 dynamic = ["version"]  # from the git tag (setuptools-scm)
 description = "Export IDA names and types to a PDB that matches the executable, for WinDbg, x64dbg and other debuggers"
 readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
+
+[project.urls]
+Repository = "https://github.com/SnowyWhite/IDA2PDB"
 
 [project.scripts]
 ida2pdb = "ida2pdb.cli:main"

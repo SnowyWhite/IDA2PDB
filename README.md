@@ -33,6 +33,7 @@ No decompiler is required.
 - [Troubleshooting](#troubleshooting)
 - [Limitations](#limitations)
 - [Further reading](#further-reading)
+- [License](#license)
 
 ## Motivation
 
@@ -305,3 +306,8 @@ DIA searches the executable's directory before the symbol path: a stale PDB ther
 - [docs/design.md](docs/design.md): architecture, the IDA-to-CodeView mapping and the rationale behind it, with references to the format specifications.
 - [docs/snapshot-format.md](docs/snapshot-format.md): the snapshot schema.
 - [docs/development.md](docs/development.md): code layout, tests, verification and releases.
+
+## License
+
+IDA2PDB is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  
+See [LICENSE](LICENSE) for the full text.
