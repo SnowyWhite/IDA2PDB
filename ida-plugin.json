@@ -1,0 +1,9 @@
+{
+  "IDAMetadataDescriptorVersion": 1,
+  "plugin": {
+    "name": "IDA2PDB",
+    "entryPoint": "ida2pdb_plugin.py",
+    "idaVersions": ["9.2"],
+    "description": "Export names and types to a PDB that matches the executable, for WinDbg, x64dbg and other debuggers, or to a portable JSON snapshot."
+  }
+}

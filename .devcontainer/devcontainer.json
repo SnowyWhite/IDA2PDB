@@ -1,0 +1,25 @@
+// A ready-to-use development environment for GitHub Codespaces and VS Code Dev
+// Containers: Python, and LLVM 18 with Clang and lld to build the native writer
+// and run the integration tests. IDA Pro is not included (it needs a license),
+// so the IDA tests skip; everything else runs. See docs/development.md.
+{
+  "name": "ida2pdb",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "containerEnv": {
+    "LLVM_CONFIG": "/usr/lib/llvm-18/bin/llvm-config"
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y --no-install-recommends python3 python3-venv llvm-18-dev clang-18 lld-18 zlib1g-dev libzstd-dev libxml2-dev libedit-dev libffi-dev libcurl4-openssl-dev && python3 -m venv .venv && .venv/bin/pip install -e .",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "llvm-vs-code-extensions.vscode-clangd"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": ".venv/bin/python",
+        "python.testing.unittestEnabled": true,
+        "python.testing.unittestArgs": ["-s", "tests"]
+      }
+    }
+  }
+}

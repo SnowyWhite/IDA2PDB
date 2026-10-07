@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+#
+# Sets up a Windows machine to build and test ida2pdb.
+#
+#   winget configure -f .config/configuration.winget
+#
+# It installs Python, MSYS2 with LLVM, Clang and lld (the native writer is built
+# against them), and the Debugging Tools for Windows (cdb, for the debugger
+# tests). IDA Pro is not installed: it needs a license.
+#
+# See docs/development.md and
+# https://learn.microsoft.com/windows/package-manager/configuration/
+#
+properties:
+  configurationVersion: 0.2.0
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Windows 10 or newer
+        allowPrerelease: true
+      settings:
+        MinVersion: "10.0.17763"
+  resources:
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: python
+      directives:
+        description: Install Python 3
+        allowPrerelease: true
+      settings:
+        id: Python.Python.3.13
+        source: winget
+
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: msys2
+      directives:
+        description: Install MSYS2 (into C:\msys64, its default)
+        allowPrerelease: true
+      settings:
+        id: MSYS2.MSYS2
+        source: winget
+
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: windows-sdk
+      directives:
+        description: Install the Windows SDK, which includes the Debugging Tools for Windows (cdb)
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsSDK.10.0.26100
+        source: winget
+
+    - resource: PSDscResources/Script
+      id: llvm
+      dependsOn:
+        - msys2
+      directives:
+        description: Install LLVM, Clang and lld into MSYS2's UCRT64 environment
+        allowPrerelease: true
+      settings:
+        GetScript: |
+          @{ Result = (Test-Path 'C:\msys64\ucrt64\bin\llvm-config.exe') }
+        TestScript: |
+          (Test-Path 'C:\msys64\ucrt64\bin\llvm-config.exe') -and
+          (Test-Path 'C:\msys64\ucrt64\bin\clang++.exe') -and
+          (Test-Path 'C:\msys64\ucrt64\bin\lld-link.exe')
+        SetScript: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -Syu --noconfirm && pacman -S --noconfirm --needed mingw-w64-ucrt-x86_64-llvm mingw-w64-ucrt-x86_64-clang mingw-w64-ucrt-x86_64-lld'
+
+    - resource: PSDscResources/Environment
+      id: llvm-config
+      dependsOn:
+        - llvm
+      directives:
+        description: Tell ida2pdb which LLVM to build its writer against
+        allowPrerelease: true
+        securityContext: elevated
+      settings:
+        Name: LLVM_CONFIG
+        Value: C:\msys64\ucrt64\bin\llvm-config.exe
+        Ensure: Present
+        Target:
+          - Machine

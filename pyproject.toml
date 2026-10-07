@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ida2pdb"
+dynamic = ["version"]  # from the git tag (setuptools-scm)
+description = "Export IDA names and types to a PDB that matches the executable, for WinDbg, x64dbg and other debuggers"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.scripts]
+ida2pdb = "ida2pdb.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ida2pdb*"]
+
+[tool.setuptools.package-data]
+ida2pdb = ["native/*.cxx"]
+
+[tool.setuptools_scm]
+fallback_version = "0+unknown"
